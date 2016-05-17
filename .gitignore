@@ -31,3 +31,13 @@ node_modules
 
 # Optional REPL history
 .node_repl_history
+TypeScript/greeter/greeter.js
+TypeScript/phone-book/js/pracxs.js.map
+TypeScript/phone-book/js/pracxs.js
+Angular2/play-ground/typings/
+Angular2/phone-book/typings/
+*.map
+Testing/karma/src/typings/
+*.js
+Angular2/phone-book-http/typings/
+Angular2/phone-book-router/typings/
