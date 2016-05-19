@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core'
+import {Component, OnInit, EventEmitter, Input, Output} from '@angular/core'
 import {Person} from './person'
 import {ContactsService} from './contact.service'
 
@@ -17,12 +17,16 @@ import {ContactsService} from './contact.service'
 })
 export class PersonListComponent implements OnInit {
     persons: Person[]
+    @Input()
     selected: Person
+    @Output()
+    selectedChange = new EventEmitter<Person>()
     
     constructor(private contactsService: ContactsService) {}
     
     select(person: Person) {
         this.selected = person
+        this.selectedChange.emit(person)
     }
     
     remove(person: Person) {
