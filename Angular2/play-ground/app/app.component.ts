@@ -1,7 +1,13 @@
-import {Component} from '@angular/core';
+import {Component} from '@angular/core'
+import {PersonListComponent} from './person-list.component'
+import {PersonDetailsComponent} from './person-details.component'
 
 @Component({
     selector: 'my-app',
-    template: '<h1>Hello world</h1>'
+    directives: [PersonListComponent, PersonDetailsComponent],
+    template: `
+        <person-list #list></person-list>
+        <person-details [contact]="list.selected"></person-details>
+    `
 })
-export class AppComponent { }
+export class AppComponent {}
