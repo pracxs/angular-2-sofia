@@ -7,7 +7,7 @@ import {ContactsService} from './contact.service'
     template: `
         <ul>
             <li class='item' [class.active]="selected===person" *ngFor="let person of persons">
-                <a href='#' (click)='select(person)'>{{person.firstName}} {{person.lastName}}</a>
+                <a href='#' (click)='select(person)'>{{person.firstName}} {{person.lastName | uppercase}}</a>
                 <a href='#' (click)='remove(person)' class='remove' title='Remove'>
                     <span class='glyphicon glyphicon-remove-sign'></span>
                 </a>

@@ -1,5 +1,6 @@
 import {Component, Input, OnChanges} from '@angular/core'
 import {Person} from './person'
+import {ContactsService} from './contact.service'
 
 @Component({
     selector: 'person-details',
@@ -11,19 +12,18 @@ import {Person} from './person'
                 <label>email: </label><b>{{contact?.email}}</b><br/>
                 
                 <label></label>
-                <a href="#" class="text-danger" (click)="showEdit=true">
+                <a href="#" class="text-danger" (click)="onEdit()">
                     <span class="glyphicon glyphicon-edit"></span>
                     Edit
                 </a>
             </span>
             
-            <form name="editContactForm" onsubmit="ctrl.submit(event)" *ngIf="showEdit">
-                <input name="id" type="hidden" value="{{contact.id}}">
-                <label>First Name: </label><input name="firstName" value="{{contact.firstName}}"><br/>
-                <label>Last Name: </label><input name="lastName" value="{{contact.lastName}}"><br/>
-                <label>email: </label><input name="email" value="{{contact.email}}"><br/>
-                <label></label><input type="submit" class="btn btn-danger" value="{{( !contactId ? 'Add' : 'Save' )}}"/>
-                <a href="#" class="text-danger" (click)="showEdit=false">Cancel</a>
+            <form name="editContactForm" (ngSubmit)="submit()" *ngIf="showEdit">
+                <label>First Name: </label><input name="firstName" [(ngModel)]="edited.firstName"><br/>
+                <label>Last Name: </label><input name="lastName" [(ngModel)]="edited.lastName"><br/>
+                <label>email: </label><input name="email" [(ngModel)]="edited.email"><br/>
+                <label></label><input type="submit" class="btn btn-danger" value="{{( !contact.id ? 'Add' : 'Save' )}}"/>
+                <a href="#" class="text-danger" (click)="onCancel()">Cancel</a>
             </form>
         </div>
     `
@@ -31,10 +31,32 @@ import {Person} from './person'
 export class PersonDetailsComponent implements OnChanges {
     @Input()
     contact: Person
+    edited: Person
     showEdit = false
+    
+    constructor(private contactsService: ContactsService) {}
     
     ngOnChanges(changes) {
         if( changes.contact )
-            this.showEdit = false
+            this.showEdit = ( this.contact && this.contact.id === null )
+    }
+    
+    onCancel() {
+        this.showEdit = false
+        if( this.contact.id === null ) {
+            this.contact = null;
+        }
+    }
+    
+    onEdit() {
+        this.showEdit = true
+        
+        this.edited = Object.assign({}, this.contact)
+    }
+    
+    submit() {
+        // validation
+        this.contactsService.update(this.edited)
+        this.showEdit = false
     }
 }

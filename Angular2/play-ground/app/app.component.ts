@@ -20,6 +20,6 @@ export class AppComponent {
     selected: Person
     
     onAdd() {
-        this.selected = null
+        this.selected = {id: null, firstName: '', lastName: '', email: ''}
     }
 }
