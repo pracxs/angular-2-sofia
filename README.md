@@ -2,6 +2,9 @@
 
 This course is intendet for quick introduction into JavaScript, TypeScript and Angular 2. It also deleivers introductory concepts on testin Angular 2 applications.
 
+## Survey
+https://www.surveymonkey.com/r/Z13818052016
+
 ## JavaScript
 
 1. Include JavaScript in an HTML
