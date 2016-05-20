@@ -2,9 +2,11 @@ import {Component, Input, Output, OnChanges, EventEmitter} from '@angular/core'
 import {NgForm} from '@angular/common'
 import {Person} from './person'
 import {ContactsService} from './contact.service'
+import {EmailValidator} from './email-validator.directive'
 
 @Component({
     selector: 'person-details',
+    directives: [EmailValidator],
     template: `
         <div id="contactsDetailsContainer" *ngIf="contact">
             <span *ngIf="!showEdit">
@@ -32,7 +34,7 @@ import {ContactsService} from './contact.service'
                     First name is required    
                 </div>
                 
-                <label>email: </label><input name="email" [ngModel]="contact.email" ngControl="email"><br/>
+                <label>email: </label><input name="email" [ngModel]="contact.email" ngControl="email" email><br/>
                 <div class="alert alert-danger" role="alert" *ngIf="!form.controls.email?.valid">
                     Email is invalid
                 </div>
