@@ -2,13 +2,15 @@ import {Component, OnInit, EventEmitter, Input, Output} from '@angular/core'
 import {Person} from './person'
 import {ContactsService} from './contact.service'
 import {Observable} from 'rxjs/Rx'
+import {MyUpperPipe} from './my-upper.pipe'
 
 @Component({
     selector: 'person-list',
+    pipes: [MyUpperPipe],
     template: `
         <ul>
             <li class='item' [class.active]="selected===person" *ngFor="let person of persons">
-                <a href='#' (click)='select(person)'>{{person.firstName}} {{person.lastName | uppercase}}</a>
+                <a href='#' (click)='select(person)'>{{person.firstName}} {{person.lastName | myUpper}}</a>
                 <a href='#' (click)='remove(person)' class='remove' title='Remove'>
                     <span class='glyphicon glyphicon-remove-sign'></span>
                 </a>

@@ -15,13 +15,13 @@ export class ContactsService {
 		];
 		
 	getAll() {
-		return Observable.create( (observer) => {
-            setTimeout( () => {
-				observer.next(this.CONTACTS)
-			}, 5000 )
-		})
+		// return Observable.create( (observer) => {
+        //     setTimeout( () => {
+		// 		observer.next(this.CONTACTS)
+		// 	}, 5000 )
+		// })
 		
-		// return Observable.of(this.CONTACTS)
+		return Observable.of(this.CONTACTS)
 	}
 	
 	getById(id: number) {
