@@ -1,5 +1,6 @@
 import {Injectable} from "@angular/core"
 import {Person} from "./person"
+import {Observable} from 'rxjs/Rx'
 
 @Injectable()
 export class ContactsService {
@@ -14,7 +15,13 @@ export class ContactsService {
 		];
 		
 	getAll() {
-		return this.CONTACTS;
+		return Observable.create( (observer) => {
+            setTimeout( () => {
+				observer.next(this.CONTACTS)
+			}, 5000 )
+		})
+		
+		// return Observable.of(this.CONTACTS)
 	}
 	
 	getById(id: number) {

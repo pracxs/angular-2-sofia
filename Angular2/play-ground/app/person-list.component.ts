@@ -1,6 +1,7 @@
 import {Component, OnInit, EventEmitter, Input, Output} from '@angular/core'
 import {Person} from './person'
 import {ContactsService} from './contact.service'
+import {Observable} from 'rxjs/Rx'
 
 @Component({
     selector: 'person-list',
@@ -36,6 +37,8 @@ export class PersonListComponent implements OnInit {
     }
     
     ngOnInit() {
-        this.persons = this.contactsService.getAll()
+        this.contactsService.getAll().subscribe( data => { 
+            this.persons=data
+        } )
     }
 }
