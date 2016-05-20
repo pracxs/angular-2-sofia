@@ -13,7 +13,7 @@ import {Person} from './person'
         
         <a id="add" href="#" class="text-danger" (click)="onAdd()"><span class="glyphicon glyphicon-plus"></span>Add</a>
         
-        <person-details [contact]="selected"></person-details>
+        <person-details [(contact)]="selected"></person-details>
     `
 })
 export class AppComponent {

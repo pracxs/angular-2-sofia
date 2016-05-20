@@ -1,4 +1,5 @@
-import {Component, Input, OnChanges} from '@angular/core'
+import {Component, Input, Output, OnChanges, EventEmitter} from '@angular/core'
+import {NgForm} from '@angular/common'
 import {Person} from './person'
 import {ContactsService} from './contact.service'
 
@@ -18,10 +19,24 @@ import {ContactsService} from './contact.service'
                 </a>
             </span>
             
-            <form name="editContactForm" (ngSubmit)="submit()" *ngIf="showEdit">
-                <label>First Name: </label><input name="firstName" [(ngModel)]="edited.firstName"><br/>
-                <label>Last Name: </label><input name="lastName" [(ngModel)]="edited.lastName"><br/>
-                <label>email: </label><input name="email" [(ngModel)]="edited.email"><br/>
+            <form name="editContactForm" #form="ngForm" (ngSubmit)="submit(form)" *ngIf="showEdit" novalidate>
+                <label>First Name: </label><input name="firstName" [ngModel]="contact.firstName" ngControl="firstName" required><br/>
+                <div class="alert alert-danger" role="alert" 
+                    *ngIf="!form.controls.firstName?.pristine && !form?.controls.firstName?.valid">
+                    First name is required    
+                </div>
+                
+                <label>Last Name: </label><input name="lastName" [ngModel]="contact.lastName" ngControl="lastName" required><br/>
+                <div class="alert alert-danger" role="alert" 
+                    *ngIf="!form.controls.lastName?.pristine && !form?.controls.lastName?.valid">
+                    First name is required    
+                </div>
+                
+                <label>email: </label><input name="email" [ngModel]="contact.email" ngControl="email"><br/>
+                <div class="alert alert-danger" role="alert" *ngIf="!form.controls.email?.valid">
+                    Email is invalid
+                </div>
+                
                 <label></label><input type="submit" class="btn btn-danger" value="{{( !contact.id ? 'Add' : 'Save' )}}"/>
                 <a href="#" class="text-danger" (click)="onCancel()">Cancel</a>
             </form>
@@ -31,7 +46,9 @@ import {ContactsService} from './contact.service'
 export class PersonDetailsComponent implements OnChanges {
     @Input()
     contact: Person
-    edited: Person
+    @Output()
+    contactChange = new EventEmitter<Person>()
+   
     showEdit = false
     
     constructor(private contactsService: ContactsService) {}
@@ -50,13 +67,17 @@ export class PersonDetailsComponent implements OnChanges {
     
     onEdit() {
         this.showEdit = true
-        
-        this.edited = Object.assign({}, this.contact)
     }
     
-    submit() {
+    submit(form: NgForm) {
+        if( ! form.valid )
+           return
+           
         // validation
-        this.contactsService.update(this.edited)
+        form.value.id = this.contact.id
+        
+        this.contactsService.update(form.value)
         this.showEdit = false
+        this.contactChange.emit(form.value)
     }
 }
