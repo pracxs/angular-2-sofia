@@ -8,66 +8,78 @@
  */
 
 'use strict';
-	
-function ContactsService() {
-	var CONTACTS = [
-			{ id: "1", firstName: "Max", lastName: "Smith", email: "max@gmail.com" },
-			{ id: "2", firstName: "Chris", lastName: "Raches", email: "chris@gmail.com" },
-			{ id: "3", firstName: "Michael", lastName: "Alloy", email: "michael@gmail.com" },
-			{ id: "4", firstName: "John", lastName: "Doe", email: "john@gmail.com" },
-			{ id: "5", firstName: "Jenny", lastName: "Doe", email: "jenny@gmail.com" }
+
+enum EditMode { add, edit }
+
+interface Contact {
+	id: number,
+	firstName: string,
+	lastName: string,
+	email?: string
+}
+
+class ContactsService {
+	private static _contactId = 5
+	private CONTACTS: Contact[] = [
+			{ id: 1, firstName: "Max", lastName: "Smith", email: "max@gmail.com" },
+			{ id: 2, firstName: "Chris", lastName: "Raches", email: "chris@gmail.com" },
+			{ id: 3, firstName: "Michael", lastName: "Alloy", email: "michael@gmail.com" },
+			{ id: 4, firstName: "John", lastName: "Doe", email: "john@gmail.com" },
+			{ id: 5, firstName: "Jenny", lastName: "Doe", email: "jenny@gmail.com" }
 		];
 		
-	this.getAll = function () {
-		return CONTACTS;
+	getAll(): Contact[] {
+		return this.CONTACTS;
 	}
 	
-	this.getById = function(id) {
-		return findById(id);
+	getById(id: number): Contact {
+		return this.findById(id);
 	}
 	
-	this.remove = function(id) {
-		var ind = findIndexById(id);
+	remove(id: number): void {
+		var ind = this.findIndexById(id);
 		if( ind>=0 )
-			CONTACTS.splice(ind,1);
+			this.CONTACTS.splice(ind,1);
 	}
 	
-	function findById(contactId) {
-		return CONTACTS.find(function(row){
+	findById(contactId: number): Contact {
+		return this.CONTACTS.find(function(row){
 			return row.id == contactId;
 		})
 	}
 	
-	function findIndexById(contactId) {
-		var contact = findById(contactId);
+	private findIndexById(contactId: number): number {
+		var contact = this.findById(contactId);
 		if( !contact ) return -1;
 		
-		return CONTACTS.indexOf(contact);
+		return this.CONTACTS.indexOf(contact);
 	}
 	
-	this.update = function(contact) {
-		var ind = findIndexById(contact.id);
+	update(contact: Contact): number {
+		var ind = this.findIndexById(contact.id);
 		if( ind<0 ) return null;
 		
-		CONTACTS.splice( ind, 1, contact );
+		this.CONTACTS.splice( ind, 1, contact );
 		
 		return contact.id;
 	}
 	
-	this.add = function(contact) {
+	add(contact: Contact): number {
 		contact.id = ++ContactsService._contactId;
 		
-		CONTACTS.push( contact );
+		this.CONTACTS.push( contact );
 		
 		return contact.id;
 	}
 }
-ContactsService._contactId = 5;
 
-function Controller(contactsService) {
-	this.contactsService = contactsService;
+class Controller {
+	private selectedId: number
+	private editMode: EditMode
+
+	constructor( private contactsService: ContactsService ) {}
 	
-	this.drawContactsList = function() {
+	drawContactsList(): void {
 		var contacts = this.contactsService.getAll();
 		
 		var html = '';
@@ -84,7 +96,7 @@ function Controller(contactsService) {
 		contactsListContainer.innerHTML = html;
 	}
 	
-	this.select = function(event, contactId) {
+	select(event: Event, contactId: number): boolean {
 		this.selectedId = contactId;
 			
 		this.drawContactsList();
@@ -94,7 +106,7 @@ function Controller(contactsService) {
 		return false;
 	}
 	
-	this.drawViewDetails = function(contactId) {
+	drawViewDetails(contactId: number): void {
 		var contactsDetailsContainer = document.getElementById('contactsDetailsContainer');
 		var contact = this.contactsService.getById(contactId);
 		contactsDetailsContainer.innerHTML = 
@@ -104,12 +116,12 @@ function Controller(contactsService) {
 			'<label></label><a href="#" class="text-danger" onclick="ctrl.edit(event,' + contact.id + ')"><span class="glyphicon glyphicon-edit"></span>Edit</a><br/>';
 	}
 	
-	this.clearDetails = function() {
+	clearDetails(): void {
 		var contactsDetailsContainer = document.getElementById('contactsDetailsContainer');
 		contactsDetailsContainer.innerHTML = '';
 	}
 	
-	this.remove = function(event, clientId) {
+	remove(event: Event, clientId: number): boolean {
 		if( this.selectedId==clientId )
 			this.clearDetails();
 			
@@ -120,8 +132,8 @@ function Controller(contactsService) {
 		return false;
 	}
 	
-	this.add = function(event) {
-		this.editMode = 'add';
+	add(event: Event): boolean {
+		this.editMode = EditMode.add;
 		
 		this.selectedId = null;
 		
@@ -132,8 +144,8 @@ function Controller(contactsService) {
 		return false;
 	}
 	
-	this.edit = function(event, clientId) {
-		this.editMode = 'edit';
+	edit(event: Event, clientId: number): boolean {
+		this.editMode = EditMode.edit;
 		
 		this.drawEditDetails(clientId);
 		
@@ -141,7 +153,7 @@ function Controller(contactsService) {
 		return false;
 	}
 	
-	this.drawEditDetails = function(contactId) {
+	drawEditDetails(contactId: number): void {
 		
 		var contact = !contactId ? {id:'', firstName:'', lastName:'', email:''} : this.contactsService.getById(contactId);
 		
@@ -161,8 +173,8 @@ function Controller(contactsService) {
 		firstNameInput.select();
 	}
 	
-	this.cancelEdit = function(event) {
-		if( this.editMode == 'edit') 
+	cancelEdit(event: Event): boolean {
+		if( this.editMode == EditMode.edit) 
 			this.drawViewDetails( this.selectedId );
 		else
 			this.clearDetails();
@@ -171,7 +183,7 @@ function Controller(contactsService) {
 		return false;
 	}
 	
-	this.submit = function(event) {
+	submit(event: Event): boolean {
 		event.preventDefault();
 		
 		var fomValid = this.validate();
@@ -182,7 +194,7 @@ function Controller(contactsService) {
 		return false;
 	}
 	
-	this.validate = function() {
+	validate(): boolean {
 		var res = false;
 		var form = document.editContactForm;
 		
@@ -198,7 +210,7 @@ function Controller(contactsService) {
 		return res;
 	}
 	
-	this.save = function() {
+	save(): void {
 		var form = document.editContactForm;
 		
 		var client = {
@@ -209,7 +221,7 @@ function Controller(contactsService) {
 			}
 		
 		var contactId;
-		if( this.editMode == 'add' )
+		if( this.editMode == EditMode.add )
 			contactId = this.contactsService.add(client);
 		else
 			contactId = this.contactsService.update(client);
@@ -220,11 +232,11 @@ function Controller(contactsService) {
 	}
 }
 
-function bootstrap() {
+function bootstrap(): void {
 	var contactsService = new ContactsService();
 	var controller = new Controller(contactsService);
 	
-	window.ctrl = controller
+	(<any> window).ctrl = controller
 	
 	controller.drawContactsList()
 }
