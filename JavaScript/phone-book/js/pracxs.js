@@ -227,7 +227,7 @@
 		var contactsService = new ContactsService();
 		var controller = new Controller(contactsService);
 		
-		window.ctrl = controller
+		exports.ctrl = controller
 		
 		controller.drawContactsList()
 	}
