@@ -8,13 +8,11 @@
  */
 
 /// <reference path="Contacts.service.ts" />
-/// <reference path="controller.ts" />
-
-'use strict'
+/// <reference path="Contacts.controller.ts" />
 
 function bootstrap(): void {
 	var contactsService = new ContactsService();
-	var controller = new Controller(contactsService);
+	var controller = new ContactsController(contactsService);
 	
 	(<any> window).ctrl = controller
 	

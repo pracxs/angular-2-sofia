@@ -1,5 +1,9 @@
 /// <reference path="Contact.interface.ts" />
 
+declare interface Array<T> {
+	find(f: (T) => boolean ): T
+}
+
 class ContactsService {
 	private static _contactId = 5
 	private CONTACTS: Contact[] = [

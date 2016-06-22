@@ -1,18 +1,19 @@
+/// <reference path="Contact.interface.ts" />
+/// <reference path="ContactEdit.form.ts" />
 /// <reference path="EditMode.enum.ts" />
-/// <reference path="Contacts.service.ts" />
 
-class Controller {
+class ContactsController {
 	private selectedId: number
 	private editMode: EditMode
 
 	constructor( private contactsService: ContactsService ) {}
 	
 	drawContactsList(): void {
-		var contacts = this.contactsService.getAll();
+		let contacts = this.contactsService.getAll();
 		
-		var html = '';
-		for( var ind in contacts ) {
-			var contact = contacts[ind];
+		let html = '';
+		for( let ind in contacts ) {
+			let contact = contacts[ind];
 			html += 
 				"<div class='item" + ( this.selectedId==contact.id ? ' active' : '' ) + "'>" + 
 					"<a href='#' onclick='ctrl.select(event, " + contact.id + ")'>" + contact.firstName + ' ' + contact.lastName.toUpperCase() + "</a>" +
@@ -20,7 +21,7 @@ class Controller {
 				"</div>";
 		}
 		
-		var contactsListContainer = document.getElementById('contactsListContainer');
+		let contactsListContainer = document.getElementById('contactsListContainer');
 		contactsListContainer.innerHTML = html;
 	}
 	
@@ -35,8 +36,8 @@ class Controller {
 	}
 	
 	drawViewDetails(contactId: number): void {
-		var contactsDetailsContainer = document.getElementById('contactsDetailsContainer');
-		var contact = this.contactsService.getById(contactId);
+		let contactsDetailsContainer = document.getElementById('contactsDetailsContainer');
+		let contact = this.contactsService.getById(contactId);
 		contactsDetailsContainer.innerHTML = 
 			'<label>First Name: </label><b>' + contact.firstName + '</b><br/>' +
 			'<label>Last Name: </label><b>' + contact.lastName + '</b><br/>' +
@@ -45,7 +46,7 @@ class Controller {
 	}
 	
 	clearDetails(): void {
-		var contactsDetailsContainer = document.getElementById('contactsDetailsContainer');
+		let contactsDetailsContainer = document.getElementById('contactsDetailsContainer');
 		contactsDetailsContainer.innerHTML = '';
 	}
 	
@@ -83,12 +84,12 @@ class Controller {
 	
 	drawEditDetails(contactId: number): void {
 		
-		var contact = !contactId ? {id:'', firstName:'', lastName:'', email:''} : this.contactsService.getById(contactId);
+		let contact = !contactId ? {id:'', firstName:'', lastName:'', email:''} : this.contactsService.getById(contactId);
 		
-		var contactsDetailsContainer = document.getElementById('contactsDetailsContainer');
+		let contactsDetailsContainer = document.getElementById('contactsDetailsContainer');
 		contactsDetailsContainer.innerHTML = 
 			'<form name="editContactForm" onsubmit="ctrl.submit(event)">' +
-				'<input name="id" type="hidden" value="' + contact.id + '">' +
+				'<input name="contactId" type="hidden" value="' + contact.id + '">' +
 				'<label>First Name: </label><input name="firstName" value="' + contact.firstName + '"><br/>' +
 				'<label>Last Name: </label><input name="lastName" value="' + contact.lastName + '"><br/>' +
 				'<label>email: </label><input name="email" value="' + contact.email + '"><br/>' +
@@ -96,7 +97,7 @@ class Controller {
 				'<a href="#" class="text-danger" onclick="ctrl.cancelEdit(event)">Cancel</a>' +
 			'</form>';
 		
-		var firstNameInput = document.editContactForm.firstName;	
+		let firstNameInput = document.editContactForm.firstName;	
 		firstNameInput.focus();
 		firstNameInput.select();
 	}
@@ -114,7 +115,7 @@ class Controller {
 	submit(event: Event): boolean {
 		event.preventDefault();
 		
-		var fomValid = this.validate();
+		let fomValid = this.validate();
 		if( !fomValid ) return;
 		
 		this.save();
@@ -123,8 +124,8 @@ class Controller {
 	}
 	
 	validate(): boolean {
-		var res = false;
-		var form = document.editContactForm;
+		let res = false;
+		let form = document.editContactForm;
 		
 		if( !form.firstName.value )
 			alert('First name is mandatory');
@@ -139,16 +140,16 @@ class Controller {
 	}
 	
 	save(): void {
-		var form = document.editContactForm;
+		let form = document.editContactForm;
 		
-		var client = {
-				id: form.id.value,
+		let client: Contact = {
+				id: +form.contactId.value,
 				firstName: form.firstName.value,
 				lastName: form.lastName.value,
 				email: form.email.value
 			}
 		
-		var contactId;
+		let contactId;
 		if( this.editMode == EditMode.add )
 			contactId = this.contactsService.add(client);
 		else
